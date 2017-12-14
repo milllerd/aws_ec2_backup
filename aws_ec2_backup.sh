@@ -31,7 +31,7 @@ done
 
 CLEANUP_AMI
 
-sleep 40
+sleep 180
 echo -e "$LGREEN$(aws ec2 describe-images --owners self|grep -w Name|cut -d '"' -f 4|sort -r|grep $DATE)`$NORM`"
 echo -e "$LYELLOW$(aws ec2 describe-images --owners self|grep -w Name|cut -d '"' -f 4|sort -r|grep -v $DATE)`$NORM`"
 
