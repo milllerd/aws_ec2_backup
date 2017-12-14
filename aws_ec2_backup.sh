@@ -20,20 +20,18 @@ if (( $AMI_DATE_IN_SECONDS <= $DATE8AGO )); then
 echo -e "Deregistering AMI - $AMI_ID for $AMI_DATE \\nDeleting Snapshot $SNAPSHOT_ID"
 aws ec2 deregister-image --image-id $AMI_ID
 aws ec2 delete-snapshot --snapshot-id $SNAPSHOT_ID
-else
-echo -e "[$(date +"%Y-%m-%d"+"%T")]: Actual backup $AMI_NAME - $AMI_ID not older than 7 days" >> $LOGFILE
 fi
 done
 }
 
 for INSTANCE_ID in $INSTANCE_IDS; do
 INSTANCE_NAME=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID|egrep -B1 '"Key": "Name"'|grep Value|cut -d '"' -f 4)
-aws ec2 create-image --instance-id $INSTANCE_ID --name "$DATENAME $INSTANCE_NAME" --description "$DATENAME $INSTANCE_NAME" --no-reboot| >> /var/log/aws_backup.log
+aws ec2 create-image --instance-id $INSTANCE_ID --name "$DATENAME $INSTANCE_NAME" --description "$DATENAME $INSTANCE_NAME" --no-reboot
 done
 
 CLEANUP_AMI
 
-#sleep 240
+sleep 40
 echo -e "$LGREEN$(aws ec2 describe-images --owners self|grep -w Name|cut -d '"' -f 4|sort -r|grep $DATE)`$NORM`"
 echo -e "$LYELLOW$(aws ec2 describe-images --owners self|grep -w Name|cut -d '"' -f 4|sort -r|grep -v $DATE)`$NORM`"
 
